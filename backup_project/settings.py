@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'django_crontab',
+    # django app
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,12 +42,28 @@ INSTALLED_APPS = [
     # added app
     'records',
     # added another app
-    'dbbackup',
+    'dbbackup'
 ]
 
-# Added database backup folder location
-DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
-DBBACKUP_STORAGE_OPTIONS = {'location': BASE_DIR/'db_backup'}
+amazon_s3 = False # enable for use in production
+
+if amazon_s3:
+    DBBACKUP_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    DBBACKUP_STORAGE_OPTIONS = {
+    'access_key': 'my_id',
+    'secret_key': 'my_secret',
+    'bucket_name': 'my_bucket_name',
+    'default_acl': 'private',
+    }
+else:
+    # Added database backup folder location in locally
+    DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    DBBACKUP_STORAGE_OPTIONS = {'location': BASE_DIR/'db_backup'}
+
+# Added job scheduling everyday morning 5:00 am
+CRONJOBS = [
+    ('0 5 * * *', 'backup_project.cron.my_backup')
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
