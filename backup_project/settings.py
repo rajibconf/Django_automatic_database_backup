@@ -62,7 +62,7 @@ else:
 
 # Added job scheduling everyday morning 5:00 am
 CRONJOBS = [
-    ('0 5 * * *', 'backup_project.cron.my_backup')
+    ('*/1 * * * *', 'backup_project.cron.my_backup')
 ]
 
 MIDDLEWARE = [
